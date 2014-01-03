@@ -38,8 +38,12 @@ enum AminoAcid {
 
 public class Weight 
 {
-    private final static double H2O_mono = 2.015650 + 15.994915;
-    private final static double H2O_avg = 2.0159 + 15.9994;
+    
+    private static class H2O 
+    {
+	private final static double mono = 2.015650 + 15.994915;
+	private final static double avg = 2.0159 + 15.9994;
+    }
     
     public static void main (String args[]) 
     {
@@ -54,8 +58,8 @@ public class Weight
 	for (int i=0; i<ca.length; ++i) {
 	    for (int j=i; j<ca.length; ++j) {
 		
-		double sum_mono = H2O_mono;
-		double sum_avg  = H2O_avg;
+		double sum_mono = H2O.mono;
+		double sum_avg  = H2O.avg;
 
 		for (int k=i; k<=j; ++k) {
 		    char c = ca[k];
