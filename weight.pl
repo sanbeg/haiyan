@@ -35,20 +35,19 @@ foreach my $str ( @ARGV ) {
   my @l = split //, uc($str);
 
   for my $i (0 .. $#l) {
+    my $sum_mono = $weights{H2O}[0];
+    my $sum_avg  = $weights{H2O}[1];
+    my $word='';
     for my $j ( $i .. $#l ) {
-      my $sum_mono = $weights{H2O}[0];
-      my $sum_avg  = $weights{H2O}[1];
-      my $word='';
-      for my $k ( $i .. $j ) {
-	my $c = $l[$k];
-	my $aa = $weights{ $c };
-	if (defined $aa) {
-	  $sum_mono += $aa->[0];
-	  $sum_avg += $aa->[1];
-	  $word .= $c;
-	} else {
-	  warn "Skipping unknown char: $c";
-	}
+
+      my $c = $l[$j];
+      my $aa = $weights{ $c };
+      if (defined $aa) {
+	$sum_mono += $aa->[0];
+	$sum_avg += $aa->[1];
+	$word .= $c;
+      } else {
+	warn "Skipping unknown char: $c";
       }
       print $word;
       printf("\t%.5f\t%.5f\n", $sum_mono, $sum_avg);
