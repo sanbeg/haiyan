@@ -56,32 +56,28 @@ public class Weight
 	char ca[] = args[0].toUpperCase().toCharArray();
 
 	for (int i=0; i<ca.length; ++i) {
-	    for (int j=i; j<ca.length; ++j) {
-		
-		double sum_mono = H2O.mono;
-		double sum_avg  = H2O.avg;
-
-		for (int k=i; k<=j; ++k) {
-		    char c = ca[k];
-		    AminoAcid aa = map.get(c);
-		    if (aa == null)
-			System.err.println("Skipping unknown character: " + c);
-		    else {
-			sum_mono += aa.mono;
-			sum_avg  += aa.avg;
-		    }
-		    
-		    System.out.print(c);
-		    
-		}
-		//System.out.println("\t" + sum_mono + "\t" + sum_avg);
-		System.out.printf("\t%.5f\t%.5f\n", sum_mono, sum_avg);
+            StringBuilder word = new StringBuilder();
+            double sum_mono = H2O.mono;
+            double sum_avg  = H2O.avg;
+            
+            for (int j=i; j<ca.length; ++j) {
+                char c = ca[j];
+                AminoAcid aa = map.get(c);
+                word.append(c);
+                
+                if (aa == null)
+                    System.err.println("Skipping unknown character: " + c);
+                else {
+                    sum_mono += aa.mono;
+                    sum_avg  += aa.avg;
+                }
+                
+                if ( word.length() > 0)
+                    System.out.printf("%s\t%.5f\t%.5f\n", word, sum_mono, sum_avg);
 		
 	    }
 	    
 	}
-	
-	
 
     }
 }

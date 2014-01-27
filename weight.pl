@@ -49,8 +49,10 @@ foreach my $str ( @ARGV ) {
       } else {
 	warn "Skipping unknown char: $c";
       }
-      print $word;
-      printf("\t%.5f\t%.5f\n", $sum_mono, $sum_avg);
+      if ( length $word ) {
+	print $word;
+	printf("\t%.5f\t%.5f\n", $sum_mono, $sum_avg);
+      }
     }
   }
 }
