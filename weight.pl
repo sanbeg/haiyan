@@ -2,6 +2,15 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
+
+my $min = 0;
+my $max;
+
+GetOptions (
+  'min=f' => \$min,
+  'max=f' => \$max,
+ ) or die;
 
 my %weights = (
   #letter,mono,avg
@@ -34,6 +43,7 @@ my %weights = (
 foreach my $str ( @ARGV ) {
   my @l = split //, uc($str);
 
+  START:
   for my $i (0 .. $#l) {
     my $sum_mono = $weights{H2O}[0];
     my $sum_avg  = $weights{H2O}[1];
@@ -49,6 +59,10 @@ foreach my $str ( @ARGV ) {
       } else {
 	warn "Skipping unknown char: $c";
       }
+
+      next START if defined $max and $sum_mono > $max;
+      next if $sum_mono < $min;
+
       if ( length $word ) {
 	print $word;
 	printf("\t%.5f\t%.5f\n", $sum_mono, $sum_avg);
