@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 enum AminoAcid {
     A ('A', 71.037114, 71.0779),
@@ -45,15 +47,30 @@ public class Weight
 	private final static double avg = 2.0159 + 15.9994;
     }
     
-    public static void main (String args[]) 
+    private static final HashMap<Character,AminoAcid> map = new HashMap<>();
+    static 
     {
-	
-	HashMap<Character,AminoAcid> map = new HashMap<>();
 	for (AminoAcid aa : AminoAcid.values()) {
 	    map.put(aa.letter,aa);
 	}
+    }
+    
+    private static final DefaultTableModel model = new DefaultTableModel
+        (
+         new String[]{"Word","Mono","Average"},
+         0
+         );
 
-	char ca[] = args[0].toUpperCase().toCharArray();
+    public static void main (String args[]) 
+    {
+        generateData( args[0] );
+        createAndShowGui();
+        
+    }
+    
+    private static void generateData ( String phrase ) 
+    {
+	char ca[] = phrase.toUpperCase().toCharArray();
 
 	for (int i=0; i<ca.length; ++i) {
             StringBuilder word = new StringBuilder();
@@ -72,12 +89,36 @@ public class Weight
                     sum_avg  += aa.avg;
                 }
                 
-                if ( word.length() > 0)
-                    System.out.printf("%s\t%.5f\t%.5f\n", word, sum_mono, sum_avg);
+                if ( word.length() > 0) {
+                    
+                    //System.out.printf("%s\t%.5f\t%.5f\n", word, sum_mono, sum_avg);
+                    model.addRow( new String[]{
+                            word.toString(), 
+                            Double.toString(sum_mono),
+                            Double.toString(sum_avg)
+                        });
+                }
+                
 		
 	    }
 	    
 	}
 
+    }
+
+    private static void createAndShowGui() {
+        //Create and set up the window.
+        JFrame frame = new JFrame("HelloWorldSwing");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JTable table = new JTable( model );
+        JScrollPane scrollpane = new JScrollPane(table);
+        frame.getContentPane().add(scrollpane);
+        
+
+       
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
     }
 }
