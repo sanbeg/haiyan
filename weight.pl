@@ -40,7 +40,8 @@ my %weights = (
  );
 
 
-foreach my $str ( @ARGV ) {
+while ( my $str = <> ){
+  chomp $str;
   my @l = split //, uc($str);
 
   START:
