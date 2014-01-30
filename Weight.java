@@ -121,19 +121,14 @@ public class Weight
                 }
                 
                 if ( word.length() > 0) {
-                    
                     model.addRow( new String[]{
                             word.toString(), 
                             String.format("%.5f", sum_mono),
                             String.format("%.5f", sum_avg)
                         });
                 }
-                
-		
 	    }
-	    
 	}
-
     }
 
     private static void createAndShowGui() {
