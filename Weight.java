@@ -65,12 +65,20 @@ public class Weight
         (
          new String[]{"Word","Mono","Average"},
          0
-         );
+         ){
+            @Override public boolean isCellEditable(int row, int col) 
+            {
+                return false;
+            }
+        };
+    
+            
 
     public static void main (String args[]) 
     {
-        //generateData( args[0] );
         createAndShowGui();
+        if ( args.length == 1 )
+            generateDataFromFile( new File(args[0]) );
         
     }
     
@@ -114,11 +122,10 @@ public class Weight
                 
                 if ( word.length() > 0) {
                     
-                    //System.out.printf("%s\t%.5f\t%.5f\n", word, sum_mono, sum_avg);
                     model.addRow( new String[]{
                             word.toString(), 
-                            Double.toString(sum_mono),
-                            Double.toString(sum_avg)
+                            String.format("%.5f", sum_mono),
+                            String.format("%.5f", sum_avg)
                         });
                 }
                 
