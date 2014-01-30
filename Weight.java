@@ -1,6 +1,12 @@
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
 
 enum AminoAcid {
     A ('A', 71.037114, 71.0779),
@@ -63,9 +69,26 @@ public class Weight
 
     public static void main (String args[]) 
     {
-        generateData( args[0] );
+        //generateData( args[0] );
         createAndShowGui();
         
+    }
+    
+    private static void generateDataFromFile( File file ) 
+    {
+        
+        try {
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String line = br.readLine();
+            br.close();
+            
+            model.setRowCount(0);
+            generateData( line );
+        }
+        catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private static void generateData ( String phrase ) 
@@ -108,9 +131,32 @@ public class Weight
 
     private static void createAndShowGui() {
         //Create and set up the window.
-        JFrame frame = new JFrame("HelloWorldSwing");
+        JFrame frame = new JFrame("Amino Acid Weight Thingy");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        JMenuBar menu_bar = new JMenuBar();
+        final JMenu menu_input = new JMenu("File");
+        menu_bar.add( menu_input );
+        frame.setJMenuBar(menu_bar);
+        
+        JMenuItem menu_item = new JMenuItem("Load Sequence");
+        menu_input.add(menu_item);
+        menu_item.addActionListener
+            (
+             new ActionListener()
+             {
+                 public void actionPerformed(ActionEvent e) {
+                     JFileChooser fc = new JFileChooser();
+                     int rc = fc.showOpenDialog(menu_input);
+                     if (rc == fc.APPROVE_OPTION) {
+                         generateDataFromFile( fc.getSelectedFile() );
+                     }
+                     
+                 }
+             }
+             );
+        
+
         JTable table = new JTable( model );
         JScrollPane scrollpane = new JScrollPane(table);
         frame.getContentPane().add(scrollpane);
