@@ -6,10 +6,11 @@ use Getopt::Long;
 
 my $min = 0;
 my $max;
-
+my $out;
 GetOptions (
   'min=f' => \$min,
   'max=f' => \$max,
+  'out=s' => \$out,
  ) or die;
 
 my %weights = (
@@ -39,6 +40,10 @@ my %weights = (
   H2O => [2.015650 + 15.994915, 2.0159 + 15.9994],
  );
 
+if ( defined $out ) {
+  open my($fh), '>', $out or die "$out: $!";
+  select $fh;
+}
 
 while ( my $str = <> ){
   chomp $str;
