@@ -5,15 +5,31 @@ use warnings;
 use DBI;
 use Getopt::Long;
 
-my $table  = 'gpm';
+my $table;
 my $dbfile = 'protein.db';
+my $max_lines;
+my $parse_spectrum = 1;
 
-GetOptions('table=s'=>\$table, 'db=s'=>\$dbfile) or die;
+GetOptions(
+	   'table=s' => \$table,
+	   'db=s'    => \$dbfile,
+	   'max=i'   => \$max_lines,
+	   'gpm!' => \$parse_spectrum,
+	  ) or die;
+
+$table //= $parse_spectrum ? 'gpm' : 'reporter';
+    
 
 sub get_cols($) {
     my $line = shift;
     chomp (my @cols = map lc, split "\t", $line);
-    $cols[0] .= '_id';
+    # $cols[0] .= '_id';
+
+    if ($parse_spectrum) {
+	my $lastcol = pop @cols;
+	push @cols, 'spectrum_title', 'run_file';
+    }
+
     return @cols;
 }
 
@@ -34,12 +50,24 @@ $dbh->do('begin');
 while (<>) {
     chomp;
     my @data = split "\t";
+
+    if ($parse_spectrum) {
+	my $lastcol = pop @data;
+	if ($lastcol =~ m/^(.+?scans:\s*\d+)\s*.+\\(.+)\|/) {
+	    push @data, $1, $2;
+	} else {
+	    warn "Failed to parse last column: $lastcol";
+	    next;
+	}
+    }
+
     $sth->execute(@data);
 
     if (++$lines % 1000 == 0) {
 	$dbh->do('commit');
 	$dbh->do('begin');
     }
+    last if defined($max_lines) and $lines > $max_lines;
 }
 $dbh->do('commit');
 
