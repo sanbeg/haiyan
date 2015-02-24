@@ -3,9 +3,12 @@
 use strict;
 use warnings;
 use DBI;
+use Getopt::Long;
 
 my $table  = 'gpm';
 my $dbfile = 'protein.db';
+
+GetOptions('table=s'=>\$table, 'db=s'=>\$dbfile) or die;
 
 sub get_cols($) {
     my $line = shift;
