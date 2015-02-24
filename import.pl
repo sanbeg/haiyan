@@ -4,24 +4,26 @@ use strict;
 use warnings;
 use DBI;
 
-chomp (my @cols = split "\t", <>);
-$cols[0] .= '_id';
+my $table  = 'gpm';
+my $dbfile = 'protein.db';
 
-print "$_\n" for @cols;
+sub get_cols($) {
+    my $line = shift;
+    chomp (my @cols = map lc, split "\t", $line);
+    $cols[0] .= '_id';
+    return @cols;
+}
 
-my $dbh = DBI->connect("dbi:SQLite:dbname=dbfile","","");
-my $col_list = join(',', map "`\L$_`", @cols);
-
-my $stmt = "CREATE TABLE `gpm` ($col_list)";
-
-print "$stmt\n";
-$dbh->do($stmt);
-
+my @cols = get_cols(<>);
+my $col_list   = join(',', map "`$_`", @cols);
 my $place_list = join(',', ('?') x @cols);
-$stmt = "INSERT INTO `gpm` ($col_list) VALUES ($place_list)";
 
-print "$stmt\n";
+print "$col_list\n";
 
+my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile", '', '');
+$dbh->do("CREATE TABLE `$table` ($col_list)");
+
+my $stmt = "INSERT INTO `$table` ($col_list) VALUES ($place_list)";
 my $sth = $dbh->prepare($stmt);
 
 my $lines = 0;
@@ -35,7 +37,6 @@ while (<>) {
 	$dbh->do('commit');
 	$dbh->do('begin');
     }
-
 }
 $dbh->do('commit');
 
