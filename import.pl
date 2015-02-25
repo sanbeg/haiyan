@@ -22,7 +22,7 @@ $table //= $parse_spectrum ? 'gpm' : 'reporter';
 
 sub get_cols($) {
     my $line = shift;
-    chomp (my @cols = map lc, split "\t", $line);
+    chomp (my @cols = map lc, split "\t|,", $line);
     # $cols[0] .= '_id';
 
     if ($parse_spectrum) {
@@ -49,7 +49,7 @@ my $lines = 0;
 $dbh->do('begin');
 while (<>) {
     chomp;
-    my @data = split "\t";
+    my @data = split "\t|,";
 
     if ($parse_spectrum) {
 	my $lastcol = pop @data;
