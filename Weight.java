@@ -82,13 +82,14 @@ public class Weight
         
     }
     
-    private static void generateDataFromFile( File file ) 
+    private static String generateDataFromFile( File file ) 
     {
+        String line=null;
         
         try {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
-            String line = br.readLine();
+            line = br.readLine();
             br.close();
             
             model.setRowCount(0);
@@ -97,6 +98,8 @@ public class Weight
         catch (java.io.IOException e) {
             e.printStackTrace();
         }
+        return line;
+        
     }
     
     private static void generateData ( String phrase ) 
@@ -143,6 +146,16 @@ public class Weight
         
         JMenuItem menu_item = new JMenuItem("Load Sequence");
         menu_input.add(menu_item);
+
+        menu_bar.add(Box.createHorizontalStrut(5));
+        menu_bar.add(new JSeparator(SwingConstants.VERTICAL));
+        menu_bar.add(Box.createHorizontalStrut(5));
+        
+        menu_bar.add(new JLabel("Sequence:"));
+        
+        final JTextField text_field = new JTextField("");
+        menu_bar.add(text_field);
+
         menu_item.addActionListener
             (
              new ActionListener()
@@ -151,14 +164,24 @@ public class Weight
                      JFileChooser fc = new JFileChooser();
                      int rc = fc.showOpenDialog(menu_input);
                      if (rc == fc.APPROVE_OPTION) {
-                         generateDataFromFile( fc.getSelectedFile() );
+                         text_field.setText(generateDataFromFile( fc.getSelectedFile() ));
                      }
                      
                  }
              }
              );
+        text_field.addActionListener
+            (
+                new ActionListener()
+                {
+                    public void actionPerformed(ActionEvent e) {
+                        String text = text_field.getText().toUpperCase();
+                        text_field.setText(text);
+                        generateData(text);
+                    }
+                }
+                );
         
-
         JTable table = new JTable( model );
         JScrollPane scrollpane = new JScrollPane(table);
         frame.getContentPane().add(scrollpane);
