@@ -8,7 +8,7 @@ use Getopt::Long;
 my $table;
 my $dbfile = 'protein.db';
 my $max_lines;
-my $parse_spectrum = 1;
+my $parse_spectrum = 0;
 
 GetOptions(
 	   'table=s' => \$table,
@@ -18,7 +18,6 @@ GetOptions(
 	  ) or die;
 
 $table //= $parse_spectrum ? 'gpm' : 'reporter';
-    
 
 sub get_cols($) {
     my $line = shift;
