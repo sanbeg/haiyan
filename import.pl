@@ -10,7 +10,6 @@ my $dbfile = 'protein.db';
 my $max_lines;
 my $max_errors = 10;
 my $parse_spectrum = 0;
-
 GetOptions(
 	   'table=s' => \$table,
 	   'db=s'    => \$dbfile,
@@ -20,10 +19,11 @@ GetOptions(
 	  ) or die;
 
 $table //= $parse_spectrum ? 'gpm' : 'reporter';
+my $sep_re = qr/\t/;
 
 sub get_cols($) {
     my $line = shift;
-    chomp (my @cols = map lc, split "\t|,", $line);
+    chomp (my @cols = map lc, split $sep_re, $line);
     # $cols[0] .= '_id';
 
     if ($parse_spectrum) {
@@ -51,7 +51,7 @@ my $errors = 0;
 $dbh->do('begin');
 while (<>) {
     chomp;
-    my @data = split "\t|,";
+    my @data = split $sep_re;
 
     if ($parse_spectrum) {
 	my $lastcol = pop @data;
