@@ -8,12 +8,14 @@ use Getopt::Long;
 my $table;
 my $dbfile = 'protein.db';
 my $max_lines;
+my $max_errors = 10;
 my $parse_spectrum = 0;
 
 GetOptions(
 	   'table=s' => \$table,
 	   'db=s'    => \$dbfile,
 	   'max=i'   => \$max_lines,
+	   'max-errors' => \$max_errors,
 	   'gpm!' => \$parse_spectrum,
 	  ) or die;
 
@@ -45,6 +47,7 @@ my $stmt = "INSERT INTO `$table` ($col_list) VALUES ($place_list)";
 my $sth = $dbh->prepare($stmt);
 
 my $lines = 0;
+my $errors = 0;
 $dbh->do('begin');
 while (<>) {
     chomp;
@@ -56,6 +59,8 @@ while (<>) {
 	    push @data, $1, $2;
 	} else {
 	    warn "Failed to parse last column: $lastcol";
+	    ++ $errors;
+	    warn("Too many errors!"), last if defined($max_errors) and $errors > $max_errors;
 	    next;
 	}
     }
