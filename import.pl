@@ -75,4 +75,11 @@ while (<>) {
 }
 $dbh->do('commit');
 
+print "imported $lines to $table\n";
+
+for my $col (@cols) {
+    $dbh->do("CREATE INDEX IF NOT EXISTS `${col}_idx` on `$table`($col)")
+      if $col eq 'sequence';
+}
+
 # select spectrum_id, count(*) as count from gpm group by spectrum_id having count > 1 order by count desc
