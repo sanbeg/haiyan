@@ -34,6 +34,7 @@ sub get_cols($) {
     return @cols;
 }
 
+
 my @cols = get_cols(<>);
 my $col_list   = join(',', map "`$_`", @cols);
 my $place_list = join(',', ('?') x @cols);
@@ -41,7 +42,13 @@ my $place_list = join(',', ('?') x @cols);
 print "$col_list\n";
 
 my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile", '', '');
-$dbh->do("CREATE TABLE `$table` ($col_list)");
+
+do {
+    #my $col_list = join(',', map(m/^log\(/ ? "`$_` REAL":"`$_` NUMERIC", @cols));
+    my $col_list = join(',', map("`$_` NUMERIC", @cols));
+    warn $col_list;
+    $dbh->do("CREATE TABLE `$table` ($col_list)");
+};
 
 my $stmt = "INSERT INTO `$table` ($col_list) VALUES ($place_list)";
 my $sth = $dbh->prepare($stmt);

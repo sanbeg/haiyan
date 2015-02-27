@@ -20,4 +20,7 @@ is($rows->[0][0], 1, 'got sequence');
 like($rows->[0][16], qr/scans:\s\d+$/, 'got scans');
 like($rows->[0][17], qr/^\w+\.mgf$/, 'got file');
 
+$rows = $dbh->selectall_arrayref('select * from gpm where `log(e)`<-5');
+is(@$rows, 5, 'got 5 rows');
+
 done_testing;
