@@ -10,6 +10,7 @@ my $dbfile = 'protein.db';
 my $max_lines;
 my $max_errors = 10;
 my $parse_spectrum = 0;
+
 GetOptions(
 	   'table=s' => \$table,
 	   'db=s'    => \$dbfile,
@@ -44,7 +45,6 @@ print "$col_list\n";
 my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile", '', '');
 
 do {
-    #my $col_list = join(',', map(m/^log\(/ ? "`$_` REAL":"`$_` NUMERIC", @cols));
     my $col_list = join(',', map("`$_` NUMERIC", @cols));
     warn $col_list;
     $dbh->do("CREATE TABLE `$table` ($col_list)");
@@ -56,11 +56,20 @@ my $sth = $dbh->prepare($stmt);
 my $lines = 0;
 my $errors = 0;
 $dbh->do('begin');
+
+my $prev_sequence = 'xxx';
 while (<>) {
     chomp;
     my @data = split $sep_re;
 
     if ($parse_spectrum) {
+
+	if ($data[0] eq $prev_sequence) {
+	    next;
+	} else {
+	    $prev_sequence = $data[0];
+	}
+
 	my $lastcol = pop @data;
 	if ($lastcol =~ m/^(.+?scans:\s*\d+)\s*.+\\(.+)\|/) {
 	    push @data, $1, $2;
