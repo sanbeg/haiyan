@@ -60,6 +60,7 @@ $dbh->do('begin');
 my $prev_sequence = 'xxx';
 while (<>) {
     chomp;
+    s/&quot;/"/g;
     my @data = split $sep_re;
 
     if ($parse_spectrum) {
@@ -72,6 +73,8 @@ while (<>) {
 
 	my $lastcol = pop @data;
 	if ($lastcol =~ m/^(.+?scans:\s*\d+)\s*.+\\(.+)\|/) {
+	    push @data, $1, $2;
+	} elsif ($lastcol =~ m/^(.+?scans:\s*"\d+")\s*.+\\(.+)\|/) {
 	    push @data, $1, $2;
 	} else {
 	    warn "Failed to parse last column: $lastcol";
