@@ -29,8 +29,7 @@ sub get_cols($) {
 
     if ($parse_spectrum) {
 	my $lastcol = pop @cols;
-	push @cols, 'spectrum_title';
-	# push @cols 'run_file';
+	push @cols, 'spectrum_title', 'run_file';
     }
 
     return @cols;
@@ -74,9 +73,9 @@ while (<>) {
 
 	my $lastcol = pop @data;
 	if ($lastcol =~ m/^(.+?scans:\s*\d+)\s*.+\\(.+)\|/) {
-	    push @data, $1; #$2 was run_file col
-	} elsif ($lastcol =~ m/^(.+?scans:\s*"\d+")/) {
-	    push @data, $1;
+	    push @data, $1, $2;
+	} elsif ($lastcol =~ m/^(.+?scans:\s*"\d+")\s*.+\\(.+)\|/) {
+	    push @data, $1, $2;
 	} else {
 	    warn "Failed to parse last column: $lastcol";
 	    ++ $errors;
